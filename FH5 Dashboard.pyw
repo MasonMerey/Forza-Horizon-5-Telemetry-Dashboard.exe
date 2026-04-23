@@ -37,7 +37,7 @@ class ForzaCustomDashboard:
 
         self.create_tachometer(260, 240)
         self.create_speed_display()
-        self.create_turbo_gauge(590, 250)   # Your preferred position
+        self.create_turbo_gauge(590, 250)
 
         # TAB 2: TIRE TEMPERATURES
         self.tab_tires = ttk.Frame(self.notebook)
@@ -81,21 +81,18 @@ class ForzaCustomDashboard:
         threading.Thread(target=self.listen_udp, daemon=True).start()
         self.root.mainloop()
 
+    # ===================== GAUGE CREATION METHODS =====================
     def create_turbo_gauge(self, cx, cy):
         radius = 58
-
-        # Background
         self.canvas_main.create_oval(cx-radius-12, cy-radius-12, cx+radius+12, cy+radius+12,
                                      outline="#222222", width=20)
         self.turbo_bg = self.canvas_main.create_oval(cx-radius, cy-radius, cx+radius, cy+radius,
                                                      outline="#444444", width=10)
 
-        # Boost arc - starts bottom-left (-15) and sweeps clockwise to bottom-right (+45)
         self.boost_arc = self.canvas_main.create_arc(cx-radius, cy-radius, cx+radius, cy+radius,
                                                      start=200, extent=0, style="arc",
                                                      outline="#00ccff", width=13)
 
-        # Zero line
         zero_angle = math.radians(200 + (15 / 60) * 270)
         zx = cx + (radius - 6) * math.cos(zero_angle)
         zy = cy + (radius - 6) * math.sin(zero_angle)
@@ -103,10 +100,8 @@ class ForzaCustomDashboard:
         ey = cy + (radius + 8) * math.sin(zero_angle)
         self.zero_line = self.canvas_main.create_line(zx, zy, ex, ey, fill="#ffffff", width=3)
 
-        # Center hub
         self.canvas_main.create_oval(cx-26, cy-26, cx+26, cy+26, fill="#1a1a1a", outline="#555555", width=5)
 
-        # Labels
         self.canvas_main.create_text(cx, cy-78, text="BOOST", font=("Consolas", 13, "bold"), fill="#ffaa00")
         self.boost_text = self.canvas_main.create_text(cx, cy+4, text="0.0", 
                                                        font=("Consolas", 26, "bold"), fill="#ffcc33")
@@ -235,7 +230,6 @@ class ForzaCustomDashboard:
         min_psi = -15.0
         max_psi = 45.0
         span = max_psi - min_psi
-
         normalized = (boost_clamped - min_psi) / span
         extent = -normalized * 270
 
@@ -288,8 +282,12 @@ class ForzaCustomDashboard:
             speed_ms = struct.unpack_from('<f', data, 256)[0]
             speed_mph = max(0, int(speed_ms * 2.23694))
 
+            # === FIXED: Throttle & Brake now correctly shown as 0-100% ===
             throttle = struct.unpack_from('<B', data, 315)[0]
             brake = struct.unpack_from('<B', data, 316)[0]
+            throttle_pct = round((throttle / 255.0) * 100)
+            brake_pct   = round((brake / 255.0) * 100)
+
             gear = struct.unpack_from('<B', data, 319)[0]
             steer = struct.unpack_from('<b', data, 320)[0]
 
@@ -313,8 +311,9 @@ class ForzaCustomDashboard:
             self.canvas_main.itemconfig(self.gear_text, text=gear_text)
             self.canvas_tires.itemconfig(self.small_gear_text, text=gear_text)
 
-            self.labels["Throttle"].config(text=f"{throttle}%")
-            self.labels["Brake"].config(text=f"{brake}%")
+            # Updated bottom bar with proper percentages
+            self.labels["Throttle"].config(text=f"{throttle_pct}%")
+            self.labels["Brake"].config(text=f"{brake_pct}%")
             self.labels["Steering"].config(text=f"{steer}°")
 
             lat_g = lat_accel / 9.81
