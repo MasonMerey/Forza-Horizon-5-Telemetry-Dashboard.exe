@@ -3,7 +3,9 @@ Forza Horizon 5 Custom Telemetry Dashboard with 3  sleek different tabs so you c
 
 The Three Tabs:
 Main Dashboard: Tachometer with redline, large speed + gear display, and circular boost gauge (vacuum to +45 PSI) with clockwise animated arc and color progression.
+
 Tire Temperatures: Four wheel temperature gauges with color-coded ranges (cold → optimal → hot).
+
 G-Force: Large circular vector display with moving dot, trailing line, and accurate magnitude (clamped to 2.5g).
 
 Live Telemetry
