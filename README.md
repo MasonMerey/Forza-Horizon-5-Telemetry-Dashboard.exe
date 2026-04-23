@@ -16,7 +16,6 @@ Smooth animations and realistic gauge behavior
 
 Visuals
 Dark racing aesthetic with neon accents
-Animated multi-color RGB glowing border around the entire window
 Custom draggable title bar (borderless mode)
 Always-on-top window
 
