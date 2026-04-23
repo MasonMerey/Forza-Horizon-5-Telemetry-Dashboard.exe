@@ -26,3 +26,15 @@ Python 3 (no external dependencies)
 Forza Horizon 5 with Data Out enabled:
 IP: 127.0.0.1
 Port: 5555
+
+Telemetry Setup in Forza Horizon 5
+
+Go to Settings → HUD and Gameplay
+Scroll down and set:
+Data Out: On
+
+Data Out IP Address: 127.0.0.1
+
+Data Out Port: 5555
+
+This setting is safe — it only sends data to programs running on your own PC.
